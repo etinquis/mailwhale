@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	conf "github.com/muety/mailwhale/config"
+	"github.com/emvi/logbuch"
 	"net"
 	"strings"
 )
@@ -24,6 +25,7 @@ func (s *SpfService) Validate(domain string) error {
 	}
 
 	for _, rr := range spfRecords {
+		logbuch.Debug("looking for our mail domain '%v' in spf record for user domain '%v': '%v'", s.config.Mail.Domain, domain, rr)
 		if strings.Contains(rr, "include:"+s.config.Mail.Domain) {
 			return nil
 		}
