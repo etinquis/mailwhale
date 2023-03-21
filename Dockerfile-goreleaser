@@ -14,7 +14,8 @@ RUN yarn && \
 FROM alpine
 WORKDIR /app
 
-COPY mailwhale README.md version.txt LICENSE config.yml templates/ ./
+COPY mailwhale README.md version.txt LICENSE config.yml ./
+COPY templates/ ./templates/
 COPY --from=ui-build-env /src/public ./webui/public
 
 ENV MW_ENV=prod
