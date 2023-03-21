@@ -69,7 +69,7 @@ func (h *TemplateHandler) getById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TemplateHandler) getDefaultContent(w http.ResponseWriter, r *http.Request) {
-	data, err := ioutil.ReadFile("assets/default_template.html")
+	data, err := ioutil.ReadFile("templates/default_template.html")
 	if err != nil {
 		util.RespondError(w, r, http.StatusInternalServerError, err)
 		return
