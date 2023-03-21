@@ -3,12 +3,14 @@ builds:
   - id: mailwhale-builds
     binary: mailwhale
     dir: .
+    env:
+      - CGO_ENABLED=0
 before:
   hooks:
-  - sudo npm install -g yarn
-  - yarn --cwd webui
-  - yarn --cwd webui build
-  - cp config.default.yml config.yml
+    - sudo npm install -g yarn
+    - yarn --cwd webui
+    - yarn --cwd webui build
+    - cp config.default.yml config.yml
 archives:
   - id: mailwhale-archives
     builds:
