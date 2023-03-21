@@ -2,11 +2,11 @@ env: dev                              # Affects log level and a few other things
 
 mail:
   domain: example.org                                     # Your server's domain name
-  system_sender: MailWhale System <system@example.org>  # Address which to send user verifications, etc. from
+  system_sender: MailWhale System <system@example.org>    # Address which to send user verifications, etc. from
 
 web:
   public_url: 'http://localhost:3000' # Publicly available URL of your instance, required for callback links via e-mail
-  listen_v4: '127.0.0.1:3000'         # Where to make the http server listen
+  listen_addr: '127.0.0.1:3000'       # Where to make the http server listen
   cors_origins:
     - 'http://localhost:5000'
 

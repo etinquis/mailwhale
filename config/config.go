@@ -82,11 +82,38 @@ func Set(config *Config) {
 func Load() *Config {
 	config := &Config{}
 
-	flag.Parse()
+	configfile := flag.String("config.file", os.Getenv("MW_CONFIG_FILE"), "path to configuration file")
+	flag.StringVar(&config.Env, "env", "dev", "whether to use development- or production settings")
+	flag.StringVar(&config.Mail.Domain, "mail.domain", "", "default domain for sending mails")
+	flag.StringVar(&config.Web.ListenAddr, "web.listen_addr", "", "IP and port for the web server to listen on (can be IPv4 or IPv6)")
+	// flag.Var(&config.Web.CorsOrigins, "web.cors_origin", "list of URLs which to accept CORS requests for")
+	flag.StringVar(&config.Web.PublicUrl, "web.public_url", "http://localhost:3000", "the URL under which your MailWhale server is available from the public internet")
+	flag.StringVar(&config.Smtp.Host, "smtp.host", "", "SMTP relay host name or IP")
+	flag.UintVar(&config.Smtp.Port, "smtp.port", 0, "SMTP relay port")
+	flag.StringVar(&config.Smtp.Username, "smtp.username", "", "SMTP relay authentication user name")
+	flag.StringVar(&config.Smtp.Password, "smtp.password", "", "SMTP relay authentication password")
+	flag.BoolVar(&config.Smtp.TLS, "smtp.tls", false, "whether to require full TLS (not to be confused with STARTTLS) for the SMTP relay")
+	flag.BoolVar(&config.Smtp.SkipVerifyTLS, "smtp.skip_verify_tls", false, "whether to skip certificate verification (e.g. trust self-signed certs)")
+	flag.StringVar(&config.Store.Path, "store.path", "data.json.db", "target location of the database file")
+	flag.StringVar(&config.Security.Pepper, "security.pepper", "", "pepper to use for hashing user passwords")
+	flag.BoolVar(&config.Security.AllowSignup, "security.allow_signup", true, "whether to allow the registration of new users")
+	flag.BoolVar(&config.Security.VerifyUsers, "security.verify_users", true, "whether to require new users to activate their account using a confirmation mail")
+	flag.BoolVar(&config.Security.VerifySenders, "security.verify_senders", true, "whether to validate sender addresses and their domains' SPF records")
+	// flag.Var(&config.Security.BlockList, "security.verify_senders", "list of regexes used to block certain recipient addresses")
 
-	if err := configor.New(&configor.Config{}).Load(config, "config.yml"); err != nil {
+	flag.Parse() // the only value we really need right now is config.file, we will re-parse after loading config in order to favor values set on the command line over values read from config file or env vars
+
+	if *configfile == "" {
+		*configfile = "config.yml"
+	}
+
+	logbuch.Info("Reading config from: %v", *configfile)
+
+	if err := configor.New(&configor.Config{}).Load(config, *configfile); err != nil {
 		logbuch.Fatal("failed to read config: %v", err)
 	}
+
+	flag.Parse()
 
 	config.Version = readVersion()
 
